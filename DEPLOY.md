@@ -1,0 +1,143 @@
+# 배포 — 관객 참여 시연
+
+## 경로
+
+| 경로 | 누가 | 무엇 |
+|---|---|---|
+| `/` | 누구나 | 랜딩: 프로세스 여섯 단계, 역할 카드 4장(아래 역할 페이지로 연결), [신분증 받기] 버튼이 `/merchant` 로 이어진다 |
+| `/issuer` | 발표자 | 1 주민센터: 번호를 찍어 발급. 결과의 holderId 가 `/holder?h=` 로 넘어간다 |
+| `/holder?h=` | 발표자 | 2 나: 지갑이 보관 중인 것. `/verifier?h=` 로 넘어간다 |
+| `/verifier?h=&s=` | 발표자 | 3 사장님: 제시 받기 → 검증 → 봉인 열어 보기(실패). 제시가 생기면 `s` 가 URL 에 붙는다 |
+| `/tax?s=` | 발표자 | 4 국세청: 봉인 열기 → 지급명세서 |
+
+역할 페이지 넷은 서로 다른 주체다. 단계 간 전달은 URL(h=holderId, s=sessionId)로만 하고, 각 페이지는 혼자서도 열린다(앞 단계 결과가 없으면 그리로 안내). 응답은 요약으로 보이고 원본은 `JSON 보기` 아래에 접혀 있다.
+| `/merchant` | 노트북 (사장님) | 사례 선택(5개) → 요청할 정보 조정 → [QR 띄우기] → 전체 화면 QR. 들어오는 제시가 목록으로 누적 |
+| `/wallet?m=<merchantId>` | 알바생 폰 | 첫 진입 시 키쌍 생성 + 신분증 자동 발급(30개 이름 풀에서 배정, 더미 주민번호) → 3칸 승인 → 제시 |
+
+화면은 이 둘뿐이다. 주민센터(발급)와 국세청(봉인 수신)은 서버 안에 있고 화면이 없다.
+**오프라인 백업**: 인터넷이 없어도 노트북에서 `npm run dev` 로 서버를 띄우면 두 화면 다 돈다.
+사장님 화면의 "이 노트북에서 알바생 화면 열기 ↗" 링크가 QR 스캔을 대신한다.
+
+QR 은 `https://<배포주소>/wallet?m=<merchantId>` 를 가리킨다. `m` 은 사장님 화면이
+처음 열릴 때 서버에 등록되는 id 로, 브라우저 `localStorage` 에 남아 새로고침해도 유지된다.
+
+## 역할별 API (내용 확인용)
+
+네 단계의 내용을 JSON 으로 그대로 본다. 발급·제시·검증·봉인 코드는 폰 흐름과 같은 것을 쓴다.
+홀더만 다르다: 여기서는 서버가 지갑을 대신 들고(내용 확인용), 폰 흐름에서는 키가 폰에만 있다.
+
+| 단계 | 역할 | 엔드포인트 | 보여주는 것 |
+|---|---|---|---|
+| 1 | 주민센터 | `POST /api/issuer/issue` `{subject?: {name, birthDate, rrn}}` | 번호를 입력(없으면 더미)하면 발급. 조각·salt·다이제스트, 봉인 헤더, 평문 번호가 VC 에 없음 |
+| 2 | 나 | `GET /api/holder/:holderId` | 지갑이 보관 중인 자격증명 전체 |
+| 3 | 나 → 사장님 | `POST /api/holder/:holderId/present` `{merchantId?, deny?}` | 보낸 것 / 잠긴 것 / 안 보낸 것, KB-JWT 내용. `merchantId` 를 주면 사장님 화면 목록에도 뜬다 |
+| 3 | 사장님 | `GET /api/verifier/:sessionId` | 검사 11개, 4줄 요약, 사장님 눈에 보이는 것(해시만 남은 항목 포함) |
+| 3 | 사장님 | `POST /api/verifier/:sessionId/open` | 봉인 열기 시도. 실패해야 정상 |
+| 4 | 국세청 | `POST /api/tax/unseal` `{sessionId}` | 봉인 해제 → 주민번호, 지급명세서 |
+
+터미널에서 순서대로 돌려 보기:
+
+```bash
+npm run demo:api                                                   # 더미 이름·번호로
+NAME=홍길동 BIRTH=2001-03-14 RRN=010314-3000000 npm run demo:api    # 번호를 직접 찍어서
+MERCHANT=<merchantId> npm run demo:api                             # 사장님 화면(/merchant)에도 뜨게
+npm run verify:live                                                # 폰 흐름 그대로 재현 + 검사 11개
+```
+
+서버 콘솔에는 API 호출마다 `[api] METHOD /path → status (ms)` 한 줄이 찍힌다.
+
+## 온체인 폐기 (Phase 6)
+
+`contracts/src/IssuerRegistry.sol` (CLAUDE.md §9 그대로). 체인에는 **폐기 인덱스와 여부만** 올라간다.
+환경변수가 있으면 체인, 없으면 메모리 스텁. 화면과 API 는 어느 쪽이든 같다(스텁이면 화면에 "스텁"이라고 뜬다).
+
+| 변수 | 설명 |
+|---|---|
+| `REGISTRY_ADDRESS` | 배포된 IssuerRegistry 주소 |
+| `RPC_URL` | 체인 RPC. **사장님 브라우저가 이 주소를 직접 읽는다**(발급기관 서버를 거치지 않기 위해, §9). CORS 되는 공개 RPC 여야 한다 |
+| `CHAIN_ID` | `31337` anvil · `11155111` Sepolia |
+| `ISSUER_CHAIN_KEY` | 컨트랙트를 배포한 키. `revoke` 쓰기(분실 신고)에만 쓴다. 서버에만 둔다 |
+
+로컬 (anvil):
+
+```bash
+anvil
+cd contracts && forge test                                   # 6 tests
+cd contracts && forge script script/Deploy.s.sol --rpc-url anvil --broadcast \
+  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80   # anvil 0번 계정
+REGISTRY_ADDRESS=0x... RPC_URL=http://127.0.0.1:8545 CHAIN_ID=31337 \
+  ISSUER_CHAIN_KEY=0xac09...ff80 npm run dev
+```
+
+Sepolia:
+
+```bash
+export SEPOLIA_RPC_URL=https://...   # Alchemy/Infura 등, 브라우저 CORS 허용되는 것
+cd contracts && forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --private-key $ISSUER_CHAIN_KEY
+# 출력된 주소를 README 에 적고(익스플로러 링크 포함), 배포 환경변수에 넣는다
+REGISTRY_ADDRESS=0x... RPC_URL=$SEPOLIA_RPC_URL CHAIN_ID=11155111 ISSUER_CHAIN_KEY=0x...
+```
+
+Sepolia 는 `revoke` 가 블록에 들어가기까지 십수 초 걸린다. 분실 신고 버튼이 그동안 "기록 중…" 으로 있다가 tx 해시와 익스플로러 링크를 보여준다.
+한계: RPC 제공자는 어느 인덱스를 조회했는지 볼 수 있다(§15-7). 컨트랙트 소유자 키가 털리면 폐기가 조작될 수 있다.
+
+## 왜 HTTPS 인가
+
+폰 카메라 때문이 아니다 (카메라 앱은 어떤 URL 이든 연다). **WebCrypto** 때문이다.
+`crypto.subtle` 은 보안 컨텍스트(HTTPS 또는 localhost)에서만 존재하고, 지갑의
+KB-JWT 서명·검증이 그걸 쓴다. LAN IP(`http://192.168.x.x`)로 폰에서 열면 서명이 안 된다.
+
+## 왜 단일 인스턴스인가
+
+세션 서버(§13)는 메모리 `Map` 이다. Vercel 같은 서버리스는 요청마다 인스턴스가 갈릴 수
+있어 관객 A 의 제시가 사장님 화면이 폴링하는 인스턴스에 없을 수 있다.
+서버리스로 가려면 `server/store.ts` 의 `SessionStore` 뒤에 KV(Upstash 등)를 끼운다.
+라우트는 바뀌지 않는다. 시연에는 단일 인스턴스가 덜 위험하다.
+
+## 환경변수
+
+서버가 드는 두 키. 재시작해도 발급기관 DID 가 같아야 폰에 저장된 신분증이 계속 유효하다.
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"   # ISSUER_SEED
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"   # TAX_SEED
+```
+
+| 변수 | 필수 | 설명 |
+|---|---|---|
+| `ISSUER_SEED` | prod 에서 필수 | 주민센터 Ed25519 seed, base64url 32바이트 |
+| `TAX_SEED` | prod 에서 필수 | 국세청 X25519 seed, base64url 32바이트 |
+| `PORT` | 선택 | 기본 3000 |
+
+`--prod` 로 실행할 때 시드가 없으면 서버가 시작을 거부한다. dev 는 고정 개발용 시드를 쓴다.
+
+## 로컬
+
+```bash
+npm run dev          # http://localhost:3000  — API + 프론트 한 포트 (Vite 미들웨어)
+npm run build        # dist/
+npm start            # prod 모드 — ISSUER_SEED, TAX_SEED 필요
+```
+
+## Docker (Fly.io / Railway / Render 공통)
+
+```bash
+docker build -t trust404 .
+docker run -p 3000:3000 -e ISSUER_SEED=... -e TAX_SEED=... trust404
+```
+
+세 곳 모두 Dockerfile 을 그대로 읽고 HTTPS 를 붙여 준다. 환경변수 두 개만 대시보드에 넣는다.
+인스턴스 수는 **1** 로 고정한다 (Fly: `fly scale count 1`).
+
+## 시연 당일 체크
+
+1. 배포 주소를 노트북에서 열고 [QR 띄우기] 가 활성화되는지 확인 (서버 등록 완료 표시)
+2. 내 폰으로 QR 을 찍어 한 번 제시 → 사장님 화면에 1건 뜨는지 확인
+3. 네트워크가 불안하면 노트북에서 `npm run dev` → 사장님 화면의 "이 노트북에서 알바생 화면 열기 ↗" 로 두 번째 탭에서 제시
+
+## 한계 (README 에도 적을 것)
+
+- 세션 서버는 시연 편의용이다. 실제로는 QR·딥링크로 지갑과 검증자가 직접 통신한다 (§15-6).
+- 서버가 nonce 를 대신 발급하고 VP 를 중계하므로, 서버를 믿지 못하면 이 경로의 재사용 방지도 믿을 수 없다.
+  서버는 VP 를 열어 보지 않고 검증은 사장님 브라우저에서 하지만, 중계자라는 사실 자체는 남는다.
+- 세션 TTL 30분. 사장님 화면 목록도 그 뒤엔 사라진다.

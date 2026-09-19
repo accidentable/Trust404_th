@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="100%" role="img" aria-label="주민센터에서 국세청까지 여섯 단계" font-family="Pretendard, 'Noto Sans KR', -apple-system, sans-serif">
+<rect width="1200" height="520" fill="#ffffff" />
+<defs>
+  <marker id="arrow-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d1d5db" /></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#059669" /></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed" /></marker>
+</defs>
+<text x="40" y="34" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#9ca3af">01</text>
+<text x="40" y="52" font-size="13" font-weight="bold" fill="#2563eb">주민센터</text>
+<text x="230" y="34" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#9ca3af">02</text>
+<text x="230" y="52" font-size="13" font-weight="bold" fill="#059669">알바생</text>
+<text x="420" y="34" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#9ca3af">03</text>
+<text x="420" y="52" font-size="13" font-weight="bold" fill="#ea580c">사장님</text>
+<text x="610" y="34" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#9ca3af">04</text>
+<text x="610" y="52" font-size="13" font-weight="bold" fill="#059669">알바생</text>
+<text x="800" y="34" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#9ca3af">05</text>
+<text x="800" y="52" font-size="13" font-weight="bold" fill="#ea580c">사장님</text>
+<text x="990" y="34" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#9ca3af">06</text>
+<text x="990" y="52" font-size="13" font-weight="bold" fill="#6b7280">국세청</text>
+<line x1="212" y1="265" x2="226" y2="265" stroke="#d1d5db" stroke-width="1.5" marker-end="url(#arrow-ink)" />
+<line x1="402" y1="265" x2="416" y2="265" stroke="#d1d5db" stroke-width="1.5" marker-end="url(#arrow-ink)" />
+<line x1="592" y1="265" x2="606" y2="265" stroke="#d1d5db" stroke-width="1.5" marker-end="url(#arrow-ink)" />
+<line x1="782" y1="265" x2="796" y2="265" stroke="#d1d5db" stroke-width="1.5" marker-end="url(#arrow-ink)" />
+<line x1="972" y1="265" x2="986" y2="265" stroke="#d1d5db" stroke-width="1.5" marker-end="url(#arrow-ink)" />
+<text x="40" y="70" font-size="15" fill="#111827" font-weight="bold">신분 자격증명을</text>
+<text x="40" y="88" font-size="15" fill="#111827" font-weight="bold">발급합니다</text>
+
+<text x="40" y="112" font-size="12" fill="#6b7280">이미 갖고 있는 정보로</text>
+<text x="40" y="128" font-size="12" fill="#6b7280">서명합니다. 신분증 사진을</text>
+<text x="40" y="144" font-size="12" fill="#6b7280">올리는 단계는 없습니다.</text>
+
+<!-- Box and Icons -->
+<rect x="40" y="190" width="170" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" />
+
+<!-- 관공서 건물 -->
+<path d="M70 275 h40 M75 275 v-30 M90 275 v-30 M105 275 v-30 M65 245 l25 -15 l25 15 Z" stroke="#111827" fill="none" stroke-width="1.5" stroke-linejoin="round"/>
+
+<!-- 서명 도장 (건물 뒤쪽 서류 느낌) -->
+<rect x="75" y="215" width="25" height="25" rx="2" stroke="#111827" fill="none" stroke-width="1.5" stroke-dasharray="2 2" />
+<circle cx="87" cy="227" r="4" stroke="#2563eb" fill="none" stroke-width="1.5" />
+
+<!-- 나가는 카드와 자물쇠 -->
+<line x1="110" y1="260" x2="122" y2="260" stroke="#111827" stroke-width="1.5" stroke-dasharray="2 2" />
+<rect x="125" y="250" width="30" height="20" rx="3" stroke="#111827" fill="#ffffff" stroke-width="1.5" />
+<path d="M136 258 h8 v6 h-8 z M138 258 v-2 a2 2 0 0 1 4 0 v2" fill="#7c3aed" />
+
+<text x="230" y="70" font-size="15" fill="#111827" font-weight="bold">지갑에 보관합니다</text>
+
+<text x="230" y="112" font-size="12" fill="#6b7280">자격증명과 개인키는</text>
+<text x="230" y="128" font-size="12" fill="#6b7280">알바생의 폰에만 있습니다.</text>
+
+<rect x="230" y="190" width="170" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" />
+
+<!-- 폰, 카드, 열쇠 -->
+<rect x="290" y="215" width="50" height="100" rx="6" stroke="#111827" fill="#ffffff" stroke-width="1.5" />
+<rect x="300" y="240" width="30" height="20" rx="3" stroke="#111827" fill="none" stroke-width="1.5" />
+<path d="M305 280 a4 4 0 1 1 8 0 a4 4 0 0 1 -8 0 M313 280 h10 v4 M318 280 v4" stroke="#111827" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+<text x="420" y="70" font-size="15" fill="#111827" font-weight="bold">필요한 정보만</text>
+<text x="420" y="88" font-size="15" fill="#111827" font-weight="bold">요청합니다</text>
+
+<text x="420" y="112" font-size="12" fill="#6b7280">일당 지급이면 성명과 만</text>
+<text x="420" y="128" font-size="12" fill="#6b7280">18세 여부. 주소, 사진은</text>
+<text x="420" y="144" font-size="12" fill="#6b7280">애초에 요청하지 않습니다.</text>
+
+<rect x="420" y="190" width="170" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" />
+
+<!-- 체크리스트와 QR -->
+<rect x="455" y="225" width="60" height="80" rx="4" stroke="#111827" fill="#ffffff" stroke-width="1.5" />
+
+<!-- 1. 성명 (체크) -->
+<rect x="463" y="235" width="8" height="8" rx="1" stroke="#111827" fill="none" stroke-width="1.2" />
+<path d="M464 239 l2 2 l4 -4" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<line x1="477" y1="239" x2="505" y2="239" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<!-- 2. 만 18세 (체크) -->
+<rect x="463" y="250" width="8" height="8" rx="1" stroke="#111827" fill="none" stroke-width="1.2" />
+<path d="M464 254 l2 2 l4 -4" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<line x1="477" y1="254" x2="500" y2="254" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<!-- 3. 주소 (미체크) -->
+<rect x="463" y="265" width="8" height="8" rx="1" stroke="#111827" fill="none" stroke-width="1.2" />
+<line x1="477" y1="269" x2="505" y2="269" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<!-- 4. 사진 (미체크) -->
+<rect x="463" y="280" width="8" height="8" rx="1" stroke="#111827" fill="none" stroke-width="1.2" />
+<line x1="477" y1="284" x2="495" y2="284" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<!-- 작은 QR -->
+<rect x="525" y="250" width="30" height="30" rx="3" stroke="#111827" fill="none" stroke-width="1.5" />
+<rect x="529" y="254" width="6" height="6" fill="#111827" />
+<rect x="545" y="254" width="6" height="6" fill="#111827" />
+<rect x="529" y="270" width="6" height="6" fill="#111827" />
+<rect x="545" y="270" width="6" height="6" fill="#111827" />
+
+<text x="610" y="70" font-size="15" fill="#111827" font-weight="bold">줄 것만 골라</text>
+<text x="610" y="88" font-size="15" fill="#111827" font-weight="bold">제시합니다</text>
+
+<text x="610" y="112" font-size="12" fill="#6b7280">보여줄 정보, 잠긴 채 전달,</text>
+<text x="610" y="128" font-size="12" fill="#6b7280">보내지 않음. 세 칸이 화면에</text>
+<text x="610" y="144" font-size="12" fill="#6b7280">그대로 보입니다.</text>
+
+<rect x="610" y="190" width="170" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" />
+
+<!-- 폰 화면과 3줄 -->
+<rect x="640" y="215" width="80" height="100" rx="6" stroke="#111827" fill="#ffffff" stroke-width="1.5" />
+
+<!-- 줄 1: 성명·만 18세 -->
+<path d="M648 240 l3 3 l6 -6" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="662" y="243" font-size="10" fill="#111827">성명·만 18세</text>
+<line x1="715" y1="240" x2="740" y2="240" stroke="#059669" stroke-width="1.5" marker-end="url(#arrow-green)" />
+
+<!-- 줄 2: 주민등록번호 -->
+<path d="M648 265 h10 v7 h-10 z M650 265 v-3 a3 3 0 0 1 6 0 v3" fill="none" stroke="#7c3aed" stroke-width="1.5" />
+<text x="662" y="268" font-size="10" fill="#111827">주민등록번호</text>
+<line x1="715" y1="265" x2="740" y2="265" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arrow-purple)" />
+
+<!-- 줄 3: 주소·사진 -->
+<path d="M648 287 l8 8 M656 287 l-8 8" stroke="#6b7280" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<text x="662" y="293" font-size="10" fill="#111827">주소·사진</text>
+
+<text x="800" y="70" font-size="15" fill="#111827" font-weight="bold">검증합니다</text>
+
+<text x="800" y="112" font-size="12" fill="#6b7280">서명, 유효기간, 본인 제시,</text>
+<text x="800" y="128" font-size="12" fill="#6b7280">폐기 여부. 발급기관에 묻지</text>
+<text x="800" y="144" font-size="12" fill="#6b7280">않으니 어디서 썼는지 새지</text>
+<text x="800" y="160" font-size="12" fill="#6b7280">않습니다.</text>
+
+<rect x="800" y="190" width="170" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" />
+
+<!-- 검증 서류와 잠긴 자물쇠 -->
+<rect x="840" y="225" width="50" height="80" rx="4" stroke="#111827" fill="#ffffff" stroke-width="1.5" />
+
+<!-- 4개의 체크 -->
+<path d="M848 243 l3 3 l6 -6" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<line x1="865" y1="240" x2="880" y2="240" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<path d="M848 258 l3 3 l6 -6" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<line x1="865" y1="255" x2="875" y2="255" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<path d="M848 273 l3 3 l6 -6" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<line x1="865" y1="270" x2="882" y2="270" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<path d="M848 288 l3 3 l6 -6" stroke="#059669" fill="none" stroke-width="1.5" stroke-linecap="round" />
+<line x1="865" y1="285" x2="878" y2="285" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/>
+
+<!-- 큰 자물쇠 (잠김) -->
+<path d="M910 260 h18 v14 h-18 z M913 260 v-5 a6 6 0 0 1 12 0 v5" fill="#7c3aed" />
+
+<text x="990" y="70" font-size="15" fill="#111827" font-weight="bold">봉인을 열어</text>
+<text x="990" y="88" font-size="15" fill="#111827" font-weight="bold">신고를 받습니다</text>
+
+<text x="990" y="112" font-size="12" fill="#6b7280">사장님이 그대로 첨부한</text>
+<text x="990" y="128" font-size="12" fill="#6b7280">봉인을 국세청만 엽니다.</text>
+<text x="990" y="144" font-size="12" fill="#6b7280">사장님 손에 번호는</text>
+<text x="990" y="160" font-size="12" fill="#6b7280">남지 않습니다.</text>
+
+<rect x="990" y="190" width="170" height="150" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5" />
+
+<!-- 열린 자물쇠, 열쇠, 지급명세서 -->
+<path d="M1025 260 h18 v14 h-18 z" fill="#7c3aed" />
+<path d="M1028 260 v-6 a6 6 0 0 1 12 0 v-2" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" />
+
+<!-- 열쇠 -->
+<path d="M1055 267 a4 4 0 1 1 8 0 a4 4 0 0 1 -8 0 M1063 267 h10 v4 M1068 267 v4" stroke="#111827" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+<!-- 지급명세서 서류 -->
+<rect x="1090" y="235" width="45" height="60" rx="3" stroke="#111827" fill="none" stroke-width="1.5" />
+<text x="1112.5" y="253" font-size="9" font-weight="bold" fill="#111827" text-anchor="middle">지급명세서</text>
+<line x1="1098" y1="265" x2="1127" y2="265" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" />
+<line x1="1098" y1="275" x2="1120" y2="275" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" />
+
+<!-- 01 위치 (잠김) -->
+<rect x="119" y="450" width="12" height="10" rx="1" fill="#7c3aed" />
+<path d="M122 450 v-3 a3 3 0 0 1 6 0 v3" stroke="#7c3aed" fill="none" stroke-width="1.5" />
+
+<!-- 05 위치 (잠김 + 라벨) -->
+<rect x="879" y="450" width="12" height="10" rx="1" fill="#7c3aed" />
+<path d="M882 450 v-3 a3 3 0 0 1 6 0 v3" stroke="#7c3aed" fill="none" stroke-width="1.5" />
+<text x="885" y="480" font-size="11" fill="#7c3aed" text-anchor="middle" font-family="monospace">열 수 없음</text>
+
+<!-- 06 위치 (열림) -->
+<rect x="1069" y="450" width="12" height="10" rx="1" fill="#7c3aed" />
+<path d="M1072 450 v-3 a3 3 0 0 1 6 0 v-1" stroke="#7c3aed" fill="none" stroke-width="1.5" stroke-linecap="round" />
+
+<!-- 02 위치 (멈춤/X) -->
+<path d="M310 500 l10 10 M320 500 l-10 10" stroke="#6b7280" fill="none" stroke-width="2" stroke-linecap="round" />
+<text x="330" y="509" font-size="11" fill="#6b7280" font-family="monospace">여기서 멈춤, 사장님은 존재도 모름</text>
+
+<line x1="40" y1="372" x2="1160" y2="372" stroke="#e5e7eb" stroke-width="1" />
+<text x="40" y="396" font-size="11" font-family="ui-monospace, Menlo, Consolas, monospace" fill="#ea580c">[ 무엇이 어디까지 가는가 ]</text>
+
+<text x="40" y="425" font-size="11" fill="#6b7280">성명 · 만 18세 이상</text>
+<line x1="160" y1="421" x2="878" y2="421" stroke="#059669" stroke-width="1.5" />
+<circle cx="160" cy="421" r="3.5" fill="#059669" />
+<path d="M880 421 l4 4 l8 -8" stroke="#059669" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<text x="898" y="425" font-size="11" fill="#059669" font-family="ui-monospace, Menlo, Consolas, monospace">보여줌</text>
+
+<text x="40" y="459" font-size="11" fill="#6b7280">주민등록번호</text>
+<line x1="131" y1="455" x2="879" y2="455" stroke="#7c3aed" stroke-width="1.5" />
+<line x1="891" y1="455" x2="1069" y2="455" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 3" />
+<text x="1090" y="459" font-size="11" fill="#7c3aed" font-family="ui-monospace, Menlo, Consolas, monospace">국세청만 엶</text>
+
+<text x="40" y="509" font-size="11" fill="#6b7280">주소 · 사진 · 발급일자</text>
+<line x1="160" y1="505" x2="308" y2="505" stroke="#9ca3af" stroke-width="1.5" />
+<circle cx="160" cy="505" r="3.5" fill="#9ca3af" />
+</svg>

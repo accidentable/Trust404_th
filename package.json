@@ -1,0 +1,44 @@
+{
+  "name": "trust404-track02",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DID/VC prototype — 신분증 사본 없는 알바 급여 지급 (TRUST404 Track 02)",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false server/index.ts",
+    "build": "tsc --noEmit && vite build",
+    "start": "tsx server/index.ts --prod",
+    "typecheck": "tsc --noEmit",
+    "phase1": "tsx scripts/phase1.ts",
+    "phase2": "tsx scripts/phase2.ts",
+    "phase3": "tsx scripts/phase3.ts",
+    "phase4": "tsx scripts/phase4.ts",
+    "demo:api": "tsx scripts/api-demo.ts",
+    "verify:live": "tsx scripts/verify-live.ts"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.9.0",
+    "@sd-jwt/core": "0.21.0",
+    "@sd-jwt/sd-jwt-vc": "^0.21.0",
+    "express": "^5.2.1",
+    "idb-keyval": "^6.3.0",
+    "jose": "^5.10.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "viem": "^2.56.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.7.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vite": "^8.3.0"
+  }
+}
