@@ -39,8 +39,12 @@ const MESSAGES: Message[] = [
   },
 ];
 
-/** 마지막 메시지가 이 진행도에서 다 드러난다. 나머지 구간은 읽을 여유. */
-const REVEAL_UNTIL = 0.8;
+/**
+ * 메시지가 드러나는 구간. 앞뒤로 여백을 남겨 둔다.
+ * 앞: 섹션이 화면에 자리를 잡을 시간. 뒤: 대화를 다 읽고 넘어갈 시간.
+ */
+const REVEAL_FROM = 0.06;
+const REVEAL_UNTIL = 0.74;
 
 export function useScrollReveal(total: number) {
   const ref = useRef<HTMLDivElement>(null);
@@ -55,33 +59,33 @@ export function useScrollReveal(total: number) {
       return;
     }
 
-    let frame = 0;
+    // rect 읽기 한 번뿐이라 스로틀을 두지 않는다.
+    // requestAnimationFrame 으로 묶으면 탭이 숨겨졌을 때 콜백이 멈추고,
+    // 그 사이 들어온 스크롤이 통째로 버려진다.
     const update = () => {
-      frame = 0;
       const el = ref.current;
       if (!el) return;
-      // 컨테이너가 화면을 지나가는 동안의 진행도 0→1
       const scrollable = el.offsetHeight - window.innerHeight;
       if (scrollable <= 0) {
         setShown(total);
         setDone(true);
         return;
       }
+      // 컨테이너가 화면을 지나가는 동안의 진행도 0→1
       const progress = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / scrollable));
-      setShown(Math.min(total, Math.floor((progress / REVEAL_UNTIL) * total)));
+      // 메시지 하나당 같은 폭을 쓴다. i 번째는 REVEAL_FROM + i*step 에서 나타난다.
+      const step = (REVEAL_UNTIL - REVEAL_FROM) / total;
+      const revealed = Math.floor((progress - REVEAL_FROM) / step) + 1;
+      setShown(Math.min(total, Math.max(0, revealed)));
       setDone(progress >= REVEAL_UNTIL);
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
     };
 
     update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
     return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
     };
   }, [total]);
 
