@@ -1,48 +1,13 @@
 /**
  * 랜딩 (/)
  *
- * 프로세스를 단계별로 설명하고, 사장님이 누르는 [신분증 받기] 로 /merchant 에 들어간다.
+ * 문제를 설명하지 않고 보여준다: 지금 실제로 오가는 대화 한 장.
+ * 그다음 역할별 API 와 "사장님에게 남는 것"으로 해법을 잇고, [신분증 받기] 로 /merchant 에 들어간다.
+ * 여섯 단계 인포그래픽은 README 에 있다.
+ *
  * 톤: 흰 배경, 넓은 여백, 얇은 세로 가이드선, 대괄호 라벨, 큰 제목에 밑줄 한 구절, 채운 버튼 하나.
  */
-/** 주민센터에서 국세청까지, 한 번의 지급이 지나가는 여섯 단계. */
-const STEPS = [
-  {
-    n: '01',
-    who: '주민센터',
-    title: '신분 자격증명을 발급합니다',
-    body: '이미 갖고 있는 정보로 서명해 알바생 지갑에 넣습니다. 주민등록번호는 이때 국세청 공개키로 봉인됩니다. 신분증 사진을 올리는 단계는 없습니다.',
-  },
-  {
-    n: '02',
-    who: '알바생',
-    title: '지갑에 보관합니다',
-    body: '자격증명과 개인키는 알바생의 폰에만 있습니다. 서버에도, 사장님에게도 올라가지 않습니다.',
-  },
-  {
-    n: '03',
-    who: '사장님',
-    title: '필요한 정보만 요청합니다',
-    body: '일당 지급이면 성명과 만 18세 여부. 주소, 사진, 발급일자는 애초에 요청하지 않고 QR 을 띄웁니다.',
-  },
-  {
-    n: '04',
-    who: '알바생',
-    title: '줄 것만 골라 제시합니다',
-    body: '보여줄 정보, 잠긴 채 전달, 보내지 않음. 세 칸이 화면에 그대로 보이고, 과한 요청이면 경고가 뜹니다.',
-  },
-  {
-    n: '05',
-    who: '사장님',
-    title: '검증합니다',
-    body: '서명, 유효기간, 본인 제시, 폐기 여부. 발급기관에 묻지 않으니 어디서 썼는지 새지 않습니다. 봉인은 열리지 않은 채 남습니다.',
-  },
-  {
-    n: '06',
-    who: '국세청',
-    title: '봉인을 열어 신고를 받습니다',
-    body: '사장님이 신고서에 그대로 첨부한 봉인을 국세청만 열어 지급명세서를 씁니다. 사장님 손에 번호는 남지 않습니다.',
-  },
-];
+import { MESSAGE_COUNT, MessageThread, useScrollReveal } from '../components/MessageThread';
 
 /** 역할 카드 4장. 미리보기 줄은 그 API 응답의 핵심 3줄. 문구는 자리표시자. */
 const ROLE_CARDS = [
@@ -84,6 +49,9 @@ const RECEIVED = ['성명', '만 18세 이상 · 예/아니오'];
 const NOT_RECEIVED = ['주소', '사진', '발급일자', '주민등록번호 (봉인된 채 국세청으로)'];
 
 export function LandingPage() {
+  // 대화 섹션을 지나는 동안 메시지가 하나씩 드러난다. 올리면 역순으로 사라진다.
+  const reveal = useScrollReveal(MESSAGE_COUNT);
+
   return (
     <div className="relative min-h-full">
       {/* 세로 가이드선: 레퍼런스의 편집 디자인 느낌. 콘텐츠 뒤에 깔린다. */}
@@ -128,33 +96,75 @@ export function LandingPage() {
           </div>
         </section>
 
-        {/* 단계 */}
-        <section id="how" className="border-t border-line py-20">
-          <div className="mono text-[13px] text-verifier">[ 여섯 단계 ]</div>
-          <h2 className="mt-4 text-[28px] font-bold tracking-tight">주민센터에서 국세청까지</h2>
-          <p className="mt-2 text-[14px] text-ink-dim">사진 한 장 대신, 사실 두 개가 지나갑니다.</p>
+        {/* 지금 벌어지는 일. 설명하지 않고 보여준다. 스크롤에 따라 대화가 하나씩 열린다. */}
+        <section
+          id="how"
+          ref={reveal.ref}
+          className="relative border-t border-line"
+          style={{ height: `calc(100vh + ${MESSAGE_COUNT * 42}vh)` }}
+        >
+          <div className="sticky top-0 flex h-screen flex-col justify-center py-10">
+            <div className="mono text-[13px] text-verifier">[ 지금 벌어지는 일 ]</div>
+            <h2 className="mt-3 text-[26px] font-bold tracking-tight md:text-[28px]">
+              이 대화를 없애는 것이 목표입니다
+            </h2>
 
-          {/* 인포그래픽. 원본 조각은 assets/infographic-panels.fragment.svg, 완성본은 public/process.svg */}
-          <div className="mt-8 -mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
-            <img
-              src="/process.svg"
-              alt="주민센터에서 국세청까지 여섯 단계. 성명과 만 18세 여부는 사장님까지, 주민등록번호는 잠긴 채 국세청까지, 주소와 사진은 알바생 지갑에서 멈춘다."
-              className="h-auto w-full min-w-[880px] md:min-w-0"
-            />
-          </div>
+            <div className="mt-6 grid items-center gap-10 md:grid-cols-2">
+              <MessageThread shown={reveal.shown} />
 
-          <ol className="mt-10 grid gap-x-10 gap-y-10 md:grid-cols-2">
-            {STEPS.map((step) => (
-              <li key={step.n} className="flex gap-5">
-                <span className="mono mt-1 text-[13px] text-ink-faint">{step.n}</span>
-                <div>
-                  <div className="mono text-[12px] text-verifier">{step.who}</div>
-                  <div className="mt-0.5 text-[17px] font-semibold">{step.title}</div>
-                  <p className="mt-1.5 text-[14px] leading-relaxed text-ink-dim">{step.body}</p>
+              {/* 대화를 다 읽은 뒤에 해설이 들어온다 */}
+              <div
+                className="hidden flex-col gap-4 transition-all duration-500 md:flex"
+                style={{
+                  opacity: reveal.done ? 1 : 0,
+                  transform: reveal.done ? 'none' : 'translateY(12px)',
+                }}
+                aria-hidden={!reveal.done}
+              >
+                <p className="text-[16px] leading-relaxed">
+                  사장님이 나쁜 사람이라서가 아닙니다. 지급명세서를 내려면 주민등록번호가 필요하고,
+                  받는 방법이 이것뿐이라 이렇게 합니다.
+                </p>
+                <div className="rounded-xl border border-line bg-panel px-5 py-4">
+                  <div className="text-[13px] font-semibold text-verifier">사진 한 장에 들어 있는 것</div>
+                  <ul className="mt-2 space-y-1 text-[15px]">
+                    <li>주민등록번호 13자리</li>
+                    <li>주소</li>
+                    <li>얼굴 사진</li>
+                    <li>발급일자</li>
+                  </ul>
+                  <p className="mt-3 text-[13px] leading-relaxed text-ink-dim">
+                    이 중 사장님에게 필요한 건 하나도 없습니다. 주민등록번호조차 국세청에 넘기기 위한
+                    것이고, 사장님이 볼 이유는 없습니다.
+                  </p>
                 </div>
-              </li>
-            ))}
-          </ol>
+                <p className="text-[15px] leading-relaxed text-ink-dim">
+                  그런데도 원본은 사장님 카톡방에, 컴퓨터에, 메일함에 남습니다.
+                  <b className="text-ink"> 유출되면 그때 문제가 됩니다.</b>
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 좁은 화면에서는 해설을 대화 아래에 따로 둔다 */}
+        <section className="border-t border-line py-14 md:hidden">
+          <p className="text-[16px] leading-relaxed">
+            사장님이 나쁜 사람이라서가 아닙니다. 지급명세서를 내려면 주민등록번호가 필요하고,
+            받는 방법이 이것뿐이라 이렇게 합니다.
+          </p>
+          <div className="mt-5 rounded-xl border border-line bg-panel px-5 py-4">
+            <div className="text-[13px] font-semibold text-verifier">사진 한 장에 들어 있는 것</div>
+            <ul className="mt-2 space-y-1 text-[15px]">
+              <li>주민등록번호 13자리</li>
+              <li>주소</li>
+              <li>얼굴 사진</li>
+              <li>발급일자</li>
+            </ul>
+            <p className="mt-3 text-[13px] leading-relaxed text-ink-dim">
+              이 중 사장님에게 필요한 건 하나도 없습니다.
+            </p>
+          </div>
         </section>
 
         {/* 역할 카드 4장. 누르면 그 역할의 페이지(/issuer /holder /verifier /tax)로 간다. 문구는 자리표시자. */}
