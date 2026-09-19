@@ -6,8 +6,10 @@
   "description": "DID/VC prototype — 신분증 사본 없는 알바 급여 지급 (TRUST404 Track 02)",
   "scripts": {
     "dev": "tsx watch --clear-screen=false server/index.ts",
+    "dev:local": "tsx --env-file=.env watch --clear-screen=false server/index.ts",
     "build": "tsc --noEmit && vite build",
     "start": "tsx server/index.ts --prod",
+    "start:local": "tsx --env-file=.env server/index.ts --prod",
     "typecheck": "tsc --noEmit",
     "phase1": "tsx scripts/phase1.ts",
     "phase2": "tsx scripts/phase2.ts",

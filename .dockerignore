@@ -1,3 +1,13 @@
 node_modules
 dist
 .git
+.gitignore
+# Foundry 산출물과 의존성: 앱 실행에 불필요 (컨트랙트는 따로 배포한다)
+contracts/out
+contracts/cache
+contracts/lib
+contracts/broadcast
+# 로컬 비밀값
+.env
+.env.*
+*.log

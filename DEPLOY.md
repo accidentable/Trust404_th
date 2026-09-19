@@ -94,6 +94,19 @@ KB-JWT 서명·검증이 그걸 쓴다. LAN IP(`http://192.168.x.x`)로 폰에�
 서버리스로 가려면 `server/store.ts` 의 `SessionStore` 뒤에 KV(Upstash 등)를 끼운다.
 라우트는 바뀌지 않는다. 시연에는 단일 인스턴스가 덜 위험하다.
 
+## 로컬에서 prod 모드 재현
+
+배포 전에 프로덕션 경로(dist 서빙, 환경변수 검사)를 그대로 확인할 수 있다.
+
+```bash
+cp .env.example .env          # 시드 두 개를 생성해 채운다 (아래 명령)
+npm run build
+npm run start:local           # .env 를 읽어 --prod 로 실행
+BASE=http://localhost:3000 npm run verify:live
+```
+
+`.env` 는 gitignore 된다. 배포 플랫폼에서는 대시보드가 환경변수를 주입하므로 `npm start` 를 쓴다.
+
 ## 환경변수
 
 서버가 드는 두 키. 재시작해도 발급기관 DID 가 같아야 폰에 저장된 신분증이 계속 유효하다.
