@@ -1,0 +1,11 @@
+# Caddy 리버스 프록시. HTTPS 인증서를 Let's Encrypt 에서 자동으로 받아 갱신한다.
+# SITE_ADDRESS 는 도메인 또는 <서버IP를-점대신-하이픈>.nip.io 형태.
+#   예) 123-45-67-89.nip.io      (도메인 없이 IP 만으로 HTTPS 가 된다)
+{
+	email {$ACME_EMAIL}
+}
+
+{$SITE_ADDRESS} {
+	encode gzip
+	reverse_proxy app:3000
+}

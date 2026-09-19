@@ -18,6 +18,11 @@ import {
  */
 const KNOWN_CHAINS: Record<number, { name: string; explorerTxUrl?: string }> = {
   11155111: { name: 'Sepolia', explorerTxUrl: 'https://sepolia.etherscan.io/tx/' },
+  // Sepolia faucet 이 막히면 아래 테스트넷 아무거나 써도 된다. 컨트랙트와 코드는 그대로다.
+  80002: { name: 'Polygon Amoy', explorerTxUrl: 'https://amoy.polygonscan.com/tx/' },
+  84532: { name: 'Base Sepolia', explorerTxUrl: 'https://sepolia.basescan.org/tx/' },
+  421614: { name: 'Arbitrum Sepolia', explorerTxUrl: 'https://sepolia.arbiscan.io/tx/' },
+  11155420: { name: 'Optimism Sepolia', explorerTxUrl: 'https://sepolia-optimism.etherscan.io/tx/' },
   31337: { name: 'Anvil (local)' },
 };
 

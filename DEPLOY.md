@@ -58,7 +58,7 @@ npm run verify:live                                                # 폰 흐름 
 |---|---|
 | `REGISTRY_ADDRESS` | 배포된 IssuerRegistry 주소 |
 | `RPC_URL` | 체인 RPC. **사장님 브라우저가 이 주소를 직접 읽는다**(발급기관 서버를 거치지 않기 위해, §9). CORS 되는 공개 RPC 여야 한다 |
-| `CHAIN_ID` | `31337` anvil · `11155111` Sepolia |
+| `CHAIN_ID` | `11155111` Sepolia · `80002` Polygon Amoy · `84532` Base Sepolia · `421614` Arbitrum Sepolia · `11155420` Optimism Sepolia · `31337` anvil |
 | `ISSUER_CHAIN_KEY` | 컨트랙트를 배포한 키. `revoke` 쓰기(분실 신고)에만 쓴다. 서버에만 둔다 |
 
 로컬 (anvil):
@@ -72,14 +72,35 @@ REGISTRY_ADDRESS=0x... RPC_URL=http://127.0.0.1:8545 CHAIN_ID=31337 \
   ISSUER_CHAIN_KEY=0xac09...ff80 npm run dev
 ```
 
-Sepolia:
+공개 테스트넷 (Sepolia 등):
 
 ```bash
-export SEPOLIA_RPC_URL=https://...   # Alchemy/Infura 등, 브라우저 CORS 허용되는 것
-cd contracts && forge script script/Deploy.s.sol --rpc-url sepolia --broadcast --private-key $ISSUER_CHAIN_KEY
-# 출력된 주소를 README 에 적고(익스플로러 링크 포함), 배포 환경변수에 넣는다
-REGISTRY_ADDRESS=0x... RPC_URL=$SEPOLIA_RPC_URL CHAIN_ID=11155111 ISSUER_CHAIN_KEY=0x...
+# 1) 배포 전용 키 생성. 기존 지갑을 쓰지 말 것
+cast wallet new                      # Address 와 Private key 가 나온다
+
+# 2) 그 Address 로 테스트 토큰 받기 (faucet 목록은 아래)
+
+# 3) RPC 준비 후 배포
+export RPC_URL=https://...           # 브라우저가 직접 읽으므로 CORS 되는 곳
+export ISSUER_CHAIN_KEY=0x...        # 1)의 Private key
+cd contracts && forge script script/Deploy.s.sol --rpc-url testnet --broadcast --private-key $ISSUER_CHAIN_KEY
 ```
+
+출력된 주소를 README §7 표와 배포 환경변수(`REGISTRY_ADDRESS`)에 넣는다.
+
+### faucet: 메인넷 잔고를 요구하지 않는 곳
+
+Alchemy·QuickNode faucet 은 봇 방지로 "메인넷에 0.001 ETH 이상" 을 요구한다. 아래는 그 조건이 없다.
+
+| 테스트넷 | faucet | 조건 |
+|---|---|---|
+| Sepolia | https://sepolia-faucet.pk910.de | 브라우저에서 잠깐 채굴. 계정 불필요 |
+| Sepolia | https://cloud.google.com/application/web3/faucet/ethereum/sepolia | 구글 계정 |
+| Polygon Amoy | https://faucet.polygon.technology | 지갑 주소만 |
+| Base Sepolia | https://portal.cdp.coinbase.com/products/faucet | Coinbase 개발자 계정 |
+
+어느 체인을 쓰든 컨트랙트와 앱 코드는 그대로다. `CHAIN_ID` 와 `RPC_URL` 만 맞추면 되고,
+화면에는 그 체인 이름과 익스플로러 링크가 자동으로 뜬다.
 
 Sepolia 는 `revoke` 가 블록에 들어가기까지 십수 초 걸린다. 분실 신고 버튼이 그동안 "기록 중…" 으로 있다가 tx 해시와 익스플로러 링크를 보여준다.
 한계: RPC 제공자는 어느 인덱스를 조회했는지 볼 수 있다(§15-7). 컨트랙트 소유자 키가 털리면 폐기가 조작될 수 있다.
@@ -133,6 +154,79 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"  
 npm run dev          # http://localhost:3000  — API + 프론트 한 포트 (Vite 미들웨어)
 npm run build        # dist/
 npm start            # prod 모드 — ISSUER_SEED, TAX_SEED 필요
+```
+
+## ncloud (네이버 클라우드) 서버에 올리기
+
+VM 한 대에 앱 + Caddy(HTTPS 자동)를 올린다. 계속 떠 있는 서버라 세션이 메모리에 있어도 문제없다.
+
+### 1. 서버 만들기
+
+Server > Server 생성. Ubuntu 22.04, 최소 사양(2vCPU/4GB)이면 충분하다.
+**공인 IP 를 붙이고**, ACG(방화벽)에서 인바운드를 연다.
+
+| 프로토콜 | 포트 | 접근 소스 | 용도 |
+|---|---|---|---|
+| TCP | 22 | 내 IP | SSH |
+| TCP | 80 | 0.0.0.0/0 | Let's Encrypt 인증서 발급 |
+| TCP | 443 | 0.0.0.0/0 | HTTPS |
+
+3000 번은 열지 않는다. Caddy 만 외부에 노출된다.
+
+### 2. 서버에 접속해 준비
+
+```bash
+ssh root@<공인IP>
+
+apt update && apt install -y docker.io docker-compose-plugin git
+systemctl enable --now docker
+
+git clone https://github.com/accidentable/Trust404_th.git
+cd Trust404_th
+```
+
+### 3. 환경변수
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+`ISSUER_SEED` 와 `TAX_SEED` 는 아래로 만들어 채운다. 체인 관련은 컨트랙트 배포 후 채운다
+(비워 두면 폐기만 스텁으로 동작하고 나머지는 전부 돈다).
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+```
+
+### 4. HTTPS 주소 정하고 띄우기
+
+**폰이 붙으려면 HTTPS 가 필수다**(WebCrypto 가 보안 컨텍스트에서만 동작). 도메인이 있으면 그걸 쓰고,
+없으면 `nip.io` 를 쓴다 — IP 의 점을 하이픈으로 바꾼 주소가 그대로 도메인이 되고 인증서도 발급된다.
+
+```bash
+# 공인 IP 가 123.45.67.89 라면
+export SITE_ADDRESS=123-45-67-89.nip.io
+export ACME_EMAIL=본인메일@example.com
+
+docker compose up -d --build
+docker compose logs -f caddy     # 인증서 발급 로그 확인 (1분 내)
+```
+
+`https://123-45-67-89.nip.io` 로 열린다. 이 주소가 QR 에 들어간다.
+
+### 5. 확인
+
+```bash
+BASE=https://123-45-67-89.nip.io npm run verify:live   # 로컬 노트북에서 실행
+```
+
+브라우저로 `/merchant` 를 열고 [QR 띄우기] → 폰으로 스캔 → 제시가 목록에 뜨는지 본다.
+
+### 갱신
+
+```bash
+git pull && docker compose up -d --build
 ```
 
 ## Docker (Fly.io / Railway / Render 공통)

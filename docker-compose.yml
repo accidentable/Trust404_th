@@ -1,0 +1,32 @@
+# ncloud 등 VM 한 대에 올릴 때. 앱은 내부 3000, Caddy 가 80/443 에서 HTTPS 를 붙인다.
+#   SITE_ADDRESS=123-45-67-89.nip.io ACME_EMAIL=me@example.com docker compose up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - '3000'
+    # 세션이 메모리에 있으므로 인스턴스는 반드시 하나여야 한다.
+    deploy:
+      replicas: 1
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?SITE_ADDRESS 를 설정하세요 (도메인 또는 <IP>.nip.io)}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  caddy_data:
+  caddy_config:

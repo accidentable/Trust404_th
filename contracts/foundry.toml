@@ -10,4 +10,6 @@ optimizer_runs = 200
 
 [rpc_endpoints]
 anvil = "http://127.0.0.1:8545"
+# 아무 테스트넷이나 쓸 수 있다. RPC_URL 하나만 export 하면 된다.
+testnet = "${RPC_URL}"
 sepolia = "${SEPOLIA_RPC_URL}"
