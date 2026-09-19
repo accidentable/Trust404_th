@@ -246,14 +246,24 @@ trust404.내도메인.com {
 **폰이 붙으려면 HTTPS 가 필수다**(WebCrypto 가 보안 컨텍스트에서만 동작). 도메인이 있으면 그걸 쓰고,
 없으면 `nip.io` 를 쓴다 — IP 의 점을 하이픈으로 바꾼 주소가 그대로 도메인이 되고 인증서도 발급된다.
 
+`.env` 에 두 줄을 추가한다. **`export` 로만 두면 안 된다** — 셸을 닫으면 값이 사라지고,
+다음에 `docker compose up` 할 때 Caddy 가 빈 설정으로 재시작 루프에 빠진다.
+
 ```bash
 # 공인 IP 가 123.45.67.89 라면
-export SITE_ADDRESS=123-45-67-89.nip.io
-export ACME_EMAIL=본인메일@example.com
+cat >> .env <<'ENV'
+SITE_ADDRESS=123-45-67-89.nip.io
+ACME_EMAIL=본인메일@example.com
+ENV
 
 docker compose --profile caddy up -d --build
 docker compose logs -f caddy     # 인증서 발급 로그 확인 (1분 내)
 ```
+
+Compose 가 `.env` 를 변수 치환에 자동으로 읽으므로 이걸로 영구 고정된다.
+
+> Caddy 가 `Restarting` 을 반복하고 로그에 `server block without any key` 가 보이면
+> `SITE_ADDRESS` 가 비어 있는 것이다. 위처럼 `.env` 에 넣고 `docker compose up -d` 하면 된다.
 
 `https://123-45-67-89.nip.io` 로 열린다. 이 주소가 QR 에 들어간다.
 
