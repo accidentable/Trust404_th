@@ -199,7 +199,49 @@ nano .env
 node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
-### 4. HTTPS 주소 정하고 띄우기
+### 4. 기존 서버와 같이 쓰는 경우
+
+이미 다른 프로젝트가 도는 서버에 올려도 된다. 이 앱은 유휴 시 메모리 200MB 안팎이고 세션도
+30분이면 사라진다. 충돌할 수 있는 건 **80/443 포트** 하나뿐이다. 먼저 확인한다.
+
+```bash
+sudo ss -tlnp '( sport = :80 or sport = :443 )'
+```
+
+**아무것도 안 나오면** → 아래 5번(Caddy 포함)으로 간다.
+
+**nginx 나 Caddy 가 이미 잡고 있으면** → 앱만 띄우고 기존 프록시에 연결한다.
+
+```bash
+APP_PORT=3100 docker compose up -d --build     # 127.0.0.1:3100 에만 열린다
+```
+
+기존 nginx 라면 사이트 설정에 아래를 추가하고 `nginx -t && systemctl reload nginx`:
+
+```nginx
+server {
+    server_name trust404.내도메인.com;       # 또는 별도 서브도메인
+    location / {
+        proxy_pass http://127.0.0.1:3100;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+인증서는 `certbot --nginx -d trust404.내도메인.com` 으로 받는다.
+기존 Caddy 라면 Caddyfile 에 블록 하나만 추가하면 인증서까지 자동이다:
+
+```
+trust404.내도메인.com {
+    reverse_proxy 127.0.0.1:3100
+}
+```
+
+> 서버를 새로 만들지 말지: 가벼운 프로젝트끼리는 같이 써도 된다. 다만 **두 프로젝트를 같은 날
+> 시연한다면** 서버 하나가 죽을 때 둘 다 죽는다는 점은 감안한다.
+
+### 5. HTTPS 주소 정하고 띄우기 (서버를 혼자 쓰는 경우)
 
 **폰이 붙으려면 HTTPS 가 필수다**(WebCrypto 가 보안 컨텍스트에서만 동작). 도메인이 있으면 그걸 쓰고,
 없으면 `nip.io` 를 쓴다 — IP 의 점을 하이픈으로 바꾼 주소가 그대로 도메인이 되고 인증서도 발급된다.
@@ -209,13 +251,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 export SITE_ADDRESS=123-45-67-89.nip.io
 export ACME_EMAIL=본인메일@example.com
 
-docker compose up -d --build
+docker compose --profile caddy up -d --build
 docker compose logs -f caddy     # 인증서 발급 로그 확인 (1분 내)
 ```
 
 `https://123-45-67-89.nip.io` 로 열린다. 이 주소가 QR 에 들어간다.
 
-### 5. 확인
+### 6. 확인
 
 ```bash
 BASE=https://123-45-67-89.nip.io npm run verify:live   # 로컬 노트북에서 실행
@@ -226,7 +268,8 @@ BASE=https://123-45-67-89.nip.io npm run verify:live   # 로컬 노트북에서 
 ### 갱신
 
 ```bash
-git pull && docker compose up -d --build
+git pull
+docker compose --profile caddy up -d --build   # 또는 APP_PORT=3100 docker compose up -d --build
 ```
 
 ## Docker (Fly.io / Railway / Render 공통)

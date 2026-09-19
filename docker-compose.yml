@@ -1,24 +1,34 @@
-# ncloud 등 VM 한 대에 올릴 때. 앱은 내부 3000, Caddy 가 80/443 에서 HTTPS 를 붙인다.
-#   SITE_ADDRESS=123-45-67-89.nip.io ACME_EMAIL=me@example.com docker compose up -d --build
+# VM 한 대에 올릴 때. 두 가지 방식을 지원한다.
+#
+#  A) 이 서버에 웹 프로젝트가 없다 — Caddy 가 80/443 을 잡고 HTTPS 를 자동으로 붙인다
+#     SITE_ADDRESS=123-45-67-89.nip.io ACME_EMAIL=me@example.com \
+#       docker compose --profile caddy up -d --build
+#
+#  B) 이미 nginx/Caddy 가 80/443 을 쓰고 있다 — 앱만 띄우고 기존 프록시에 연결한다
+#     APP_PORT=3100 docker compose up -d --build
+#     → 기존 프록시에서 127.0.0.1:3100 으로 reverse proxy
 services:
   app:
     build: .
     restart: unless-stopped
     env_file: .env
-    expose:
-      - '3000'
+    # 외부에 직접 노출하지 않는다. 프록시(Caddy 또는 기존 nginx)만 앞에 둔다.
+    ports:
+      - '127.0.0.1:${APP_PORT:-3000}:3000'
     # 세션이 메모리에 있으므로 인스턴스는 반드시 하나여야 한다.
     deploy:
       replicas: 1
 
   caddy:
+    profiles: ['caddy']
     image: caddy:2-alpine
     restart: unless-stopped
     ports:
       - '80:80'
       - '443:443'
     environment:
-      SITE_ADDRESS: ${SITE_ADDRESS:?SITE_ADDRESS 를 설정하세요 (도메인 또는 <IP>.nip.io)}
+      # caddy 프로필을 쓸 때 반드시 설정한다. 비어 있으면 Caddy 가 시작하면서 에러를 낸다.
+      SITE_ADDRESS: ${SITE_ADDRESS:-}
       ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
