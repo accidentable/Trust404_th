@@ -39,6 +39,12 @@ export interface VerifyPresentationOptions {
   expectedVct: string;
   /** 검증 시각(초). 만료 시연에서 미래로 밀어 쓴다. */
   now?: number;
+  /**
+   * 허용 시계 오차(초). 발급자와 검증자의 시계는 몇 초씩 어긋난다.
+   * 이 여유가 없으면 방금 발급된 자격증명이 "아직 유효하지 않음"으로 거부된다.
+   * 기본 120초. 만료 판정도 같은 폭만큼 너그러워진다.
+   */
+  skewSeconds?: number;
   /** 이 VP 를 받아낸 제시 요청. 넘기면 요청 충족 여부를 같이 보고한다. */
   request?: PresentationRequest;
   /**
@@ -60,6 +66,12 @@ export interface VerifyPresentationOptions {
  * did:key 라서 발급기관 서버에 접속할 일 자체가 없고,
  * 따라서 "이 사람이 지금 어디서 신분증을 쓰는지"가 새지 않는다.
  */
+/**
+ * 기본 허용 시계 오차. 배포 서버가 발급하고 폰·노트북이 검증하므로,
+ * 여유가 없으면 방금 발급된 자격증명이 "아직 유효하지 않음"으로 거부된다.
+ */
+const DEFAULT_SKEW_SECONDS = 120;
+
 export class EmployerVerifier {
   readonly name = '사장님';
 
@@ -102,6 +114,7 @@ export class EmployerVerifier {
     options: VerifyPresentationOptions,
   ): Promise<VerificationReport> {
     const now = options.now ?? nowInSeconds();
+    const skew = options.skewSeconds ?? DEFAULT_SKEW_SECONDS;
     const checks: VerificationCheck[] = [];
     const push = (check: VerificationCheck) => checks.push(check);
 
@@ -137,20 +150,25 @@ export class EmployerVerifier {
     }
     push({ id: 'issuer-signature', label: '주민센터 서명 확인', ok: signatureOk, detail: signatureDetail });
 
-    // 3) 유효기간
+    // 3) 유효기간. 시계 오차를 감안한다 (발급 서버와 검증 기기의 시계는 어긋난다).
     const exp = typeof payload.exp === 'number' ? payload.exp : undefined;
     const iat = typeof payload.iat === 'number' ? payload.iat : undefined;
-    const notExpired = exp !== undefined && exp > now;
+    const nbf = typeof payload.nbf === 'number' ? payload.nbf : undefined;
+    const notExpired = exp !== undefined && exp + skew > now;
+    const alreadyValid = (nbf ?? iat ?? 0) - skew <= now;
+    const validityOk = notExpired && alreadyValid;
     push({
       id: 'validity',
       label: '유효기간 정상',
-      ok: notExpired,
+      ok: validityOk,
       detail:
         exp === undefined
           ? 'exp 클레임이 없습니다'
-          : notExpired
-            ? `만료까지 ${exp - now}초 남음 (iat=${iat ?? '?'})`
-            : `${now - exp}초 전에 만료됨`,
+          : !alreadyValid
+            ? `아직 유효하지 않습니다 (iat=${iat ?? nbf ?? '?'}, 지금=${now}, 허용 오차 ${skew}초)`
+            : notExpired
+              ? `만료까지 ${exp - now}초 남음 (iat=${iat ?? '?'})`
+              : `${now - exp}초 전에 만료됨`,
     });
 
     // 4) 타입 확인 — 계좌 VC 를 신분 VC 자리에 끼워 넣지 못하게 한다.
@@ -243,6 +261,7 @@ export class EmployerVerifier {
       );
       const result = await sdjwt.verify(presentation, {
         currentDate: now,
+        skewSeconds: skew,
         ...(requireKeyBinding && options.request
           ? {
               keyBindingNonce: options.request.nonce,
