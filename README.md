@@ -286,15 +286,19 @@ forge install foundry-rs/forge-std   # 최초 1회
 forge test
 ```
 
-**Sepolia 배포 상태: 미배포.** 자금 있는 키가 필요해 사용자가 직접 해야 한다. 배포 후 아래를 채운다.
+**Sepolia 에 배포되어 있다.**
 
 | 항목 | 값 |
 |---|---|
 | 네트워크 | Sepolia (chainId 11155111) |
-| 컨트랙트 주소 | `(배포 후 기입)` |
-| 익스플로러 | `(https://sepolia.etherscan.io/address/... 기입)` |
+| 컨트랙트 주소 | `0x6c30f02f3f5e31a9a0616c5b9756d8498a6b66e5` |
+| 익스플로러 | https://sepolia.etherscan.io/address/0x6c30f02f3f5e31a9a0616c5b9756d8498a6b66e5 |
 
-로컬 anvil 에서는 발급 → 제시 → 검증 통과 → 폐기 트랜잭션 → 같은 제시 재검증 거부까지 확인했다.
+사장님 브라우저가 이 컨트랙트를 **RPC 로 직접 읽는다.** 발급기관 서버를 거치지 않으므로
+발급기관은 누가 어디서 검증했는지 모른다.
+
+로컬 anvil 과 Sepolia 양쪽에서 발급 → 제시 → 검증 통과 → 폐기 트랜잭션 → 같은 제시 재검증 거부까지
+확인했다.
 자세한 명령은 [DEPLOY.md](DEPLOY.md) 를 참고한다.
 
 ---
