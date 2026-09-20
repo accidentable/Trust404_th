@@ -34,7 +34,7 @@ export function registerPayrollRoutes(app: Express, registry: RegistrySetup) {
     for (const [id, r] of rooms) if (Date.now() - r.created > 24 * 3600_000) rooms.delete(id);
     if (rooms.size >= 200) { res.status(429).json({ error: '데모 세션 한도에 도달했습니다.' }); return; }
     const room: Room = { id: token(), merchant: token(), worker: token(), admin: token(), created: Date.now(), changed: false, busy: false,
-      subject: { name: '신혜원', birthDate: '2003-04-12', address: '서울특별시 성북구 대학로 24 (가상)', rrn: '030412-4000000', photo: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDAiPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkYmU1ZjEiLz48Y2lyY2xlIGN4PSI0MCIgY3k9IjM1IiByPSIxOCIgZmlsbD0iIzhjYTFjMCIvPjxwYXRoIGQ9Ik0xMCAxMDB2LTE1YTMwIDMwIDAgMCAxIDYwIDB2MTUiIGZpbGw9IiM4Y2ExYzAiLz48L3N2Zz4=', documentIssuedOn: new Date().toISOString().slice(0,10), issuingAuthority: '모의 성북구 주민센터' }, requests: [] };
+      subject: { name: '윤태호', birthDate: '2003-04-12', address: '서울특별시 성북구 대학로 24 (가상)', rrn: '030412-4000000', photo: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDAiPjxyZWN0IHdpZHRoPSI4MCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkYmU1ZjEiLz48Y2lyY2xlIGN4PSI0MCIgY3k9IjM1IiByPSIxOCIgZmlsbD0iIzhjYTFjMCIvPjxwYXRoIGQ9Ik0xMCAxMDB2LTE1YTMwIDMwIDAgMCAxIDYwIDB2MTUiIGZpbGw9IiM4Y2ExYzAiLz48L3N2Zz4=', documentIssuedOn: new Date().toISOString().slice(0,10), issuingAuthority: '모의 성북구 주민센터' }, requests: [] };
     rooms.set(room.id, room);
     res.json({ id: room.id, merchant: room.merchant, worker: room.worker, admin: room.admin });
   });

@@ -11,3 +11,19 @@ contracts/broadcast
 .env
 .env.*
 *.log
+
+# Local artifacts and documentation are not part of the app image
+artifacts
+output
+tmp
+coverage
+playwright-report
+test-results
+*.zip
+*.tar.gz
+*.mp4
+*.mov
+*.pem
+*.key
+docs
+*.md

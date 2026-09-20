@@ -17,7 +17,7 @@ async function issue() {
   assert.equal(r.status, 200, JSON.stringify(r.data)); return wallet.save(r.data.credential);
 }
 const old = await issue();
-assert.equal(old.selectiveClaims.name, '신혜원');
+assert.equal(old.selectiveClaims.name, '윤태호');
 assert.ok(old.selectiveClaims.photo);
 const created = await call(path + '/requests', room.merchant, { amount: 950000, month: '2026-09', phone: '010-0000-1234' });
 assert.equal(created.status, 200, JSON.stringify(created.data));

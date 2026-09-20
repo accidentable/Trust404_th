@@ -18,3 +18,16 @@ contracts/lib/
 *.key
 *.tar.gz
 /artifacts/
+
+# Local exports, recordings, editor caches and scratch work
+/output/
+/tmp/
+/coverage/
+/playwright-report/
+/test-results/
+*.zip
+*.mp4
+*.mov
+*.tsbuildinfo
+.DS_Store
+Thumbs.db

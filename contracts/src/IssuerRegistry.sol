@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @notice 폐기 레지스트리 (CLAUDE.md §9).
+/// @notice 발급기관 권한으로 증명의 폐기 상태를 기록하는 레지스트리.
 /// 체인에 올라가는 것은 인덱스 번호와 폐기 여부뿐이다. 개인정보는 없다.
 /// 인덱스↔사람 매핑은 발급기관만 안다. 이 컨트랙트는 발급기관 DB 를 대체하지 않는다.
 contract IssuerRegistry {
