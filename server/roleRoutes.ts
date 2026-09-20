@@ -99,6 +99,7 @@ export function registerRoleRoutes(app: Express, { store, residentCenter, taxSer
    * 체인이면 트랜잭션이 블록에 들어갈 때까지 기다렸다가 tx 해시와 익스플로러 링크를 돌려준다.
    */
   app.post('/api/issuer/revoke', async (req, res) => {
+    if (!process.env.DEMO_ADMIN_TOKEN || req.headers.authorization !== `Bearer ${process.env.DEMO_ADMIN_TOKEN}`) { res.status(403).json({ error: '관리자 인증이 필요합니다.' }); return; }
     const { statusIndex } = req.body as { statusIndex?: unknown };
     const index = Number(statusIndex);
     if (!Number.isInteger(index) || index < 0) {

@@ -12,6 +12,9 @@ export interface ResidentIdSubject {
   birthDate: string;
   /** 주민등록번호 13자리. Phase 4 부터 국세청 공개키로 봉인해서 넣는다. */
   rrn: string;
+  photo?: string;
+  documentIssuedOn?: string;
+  issuingAuthority?: string;
 }
 
 /** 신분 VC 본체에 실리는 클레임. */

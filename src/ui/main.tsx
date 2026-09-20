@@ -7,6 +7,7 @@ import { IssuerPage } from './pages/IssuerPage';
 import { HolderPage } from './pages/HolderPage';
 import { VerifierPage } from './pages/VerifierPage';
 import { TaxPage } from './pages/TaxPage';
+import { PayApp } from './pages/PayApp';
 import './index.css';
 
 /**
@@ -23,8 +24,11 @@ import './index.css';
  *   /tax?s=<sessionId>      4 국세청: 봉인 열기 → 지급명세서
  */
 const ROUTES: Record<string, ComponentType> = {
-  '/merchant': MerchantPage,
-  '/wallet': WalletPage,
+  '/app': PayApp,
+  '/merchant': PayApp,
+  '/wallet': PayApp,
+  '/legacy/merchant': MerchantPage,
+  '/legacy/wallet': WalletPage,
   '/issuer': IssuerPage,
   '/holder': HolderPage,
   '/verifier': VerifierPage,
@@ -32,7 +36,9 @@ const ROUTES: Record<string, ComponentType> = {
 };
 
 const path = window.location.pathname.replace(/\/+$/, '') || '/';
-const Page = ROUTES[path] ?? LandingPage;
+const Page = path === '/wallet' && new URLSearchParams(window.location.search).has('m')
+  ? WalletPage
+  : ROUTES[path] ?? LandingPage;
 
 const container = document.getElementById('root');
 if (!container) throw new Error('#root 를 찾을 수 없습니다');

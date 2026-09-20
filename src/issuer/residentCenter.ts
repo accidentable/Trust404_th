@@ -90,10 +90,13 @@ export class ResidentCenterIssuer {
       address: subject.address,
       isOver18,
       birthDate: subject.birthDate,
+      ...(subject.photo ? { photo: subject.photo } : {}),
+      ...(subject.documentIssuedOn ? { documentIssuedOn: subject.documentIssuedOn } : {}),
+      ...(subject.issuingAuthority ? { issuingAuthority: subject.issuingAuthority } : {}),
     };
 
     const credential = await this.sdjwt.issue(payload, {
-      _sd: [...RESIDENT_ID_SELECTIVE_CLAIMS],
+      _sd: [...RESIDENT_ID_SELECTIVE_CLAIMS, ...(['photo', 'documentIssuedOn', 'issuingAuthority'] as const).filter(k => subject[k])],
     });
 
     return { credential, statusIndex, rrnSealed, issuedAt, expiresAt };

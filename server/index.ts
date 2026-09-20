@@ -6,6 +6,7 @@ import { MemoryStore } from './store';
 import { DemoHolders } from './demoRoles';
 import { registerRoleRoutes } from './roleRoutes';
 import { setupRegistry } from './chain';
+import { registerPayrollRoutes } from './payrollRoutes';
 import { createPresentationRequest } from '../src/verifier/request';
 import { randomBytes } from '../src/shared/crypto';
 import type {
@@ -44,6 +45,7 @@ app.use(express.json({ limit: '64kb' }));
 const store = new MemoryStore(SESSION_TTL_MS);
 // 폐기 레지스트리: 환경변수(REGISTRY_ADDRESS, RPC_URL, CHAIN_ID)가 있으면 체인, 없으면 메모리 스텁.
 const registrySetup = setupRegistry();
+registerPayrollRoutes(app, registrySetup);
 
 // API 요청 로그 한 줄. 시연 중 "지금 뭐가 오가고 있나"를 서버 콘솔에서 바로 본다.
 app.use((req, res, next) => {
@@ -186,6 +188,7 @@ app.get('/api/revocation/:index', async (req, res) => {
 
 /** 쓰기 = 분실 신고. 발급기관만 한다. 체인이면 트랜잭션이 블록에 들어갈 때까지 기다린다. */
 app.post('/api/revocation/:index', async (req, res) => {
+  if (!process.env.DEMO_ADMIN_TOKEN || req.headers.authorization !== `Bearer ${process.env.DEMO_ADMIN_TOKEN}`) { res.status(403).json({ error: '관리자 인증이 필요합니다.' }); return; }
   const index = Number(req.params.index);
   if (!Number.isInteger(index)) {
     res.status(400).json({ error: 'index 가 정수가 아닙니다' });
@@ -201,7 +204,13 @@ app.post('/api/revocation/:index', async (req, res) => {
 
 // ── 역할별 API (1 주민센터 · 2 나 · 3 사장님 · 4 국세청) ──────────────
 // 각 단계의 내용을 JSON 으로 확인하는 경로. 상세는 server/roleRoutes.ts
-registerRoleRoutes(app, { store, residentCenter, taxService, holders: new DemoHolders(), registry: registrySetup });
+if (process.env.ENABLE_LEGACY_SERVER_WALLET === 'true') {
+  registerRoleRoutes(app, { store, residentCenter, taxService, holders: new DemoHolders(), registry: registrySetup });
+} else {
+  app.use(['/api/issuer/issue', '/api/issuer/revoke', '/api/holder', '/api/verifier', '/api/tax'], (_req, res) => {
+    res.status(403).json({ error: '서버 보관형 실험 지갑은 비활성화되었습니다. 브라우저 지갑을 사용하세요.' });
+  });
+}
 
 // ── 프론트 ───────────────────────────────────────────────────────────
 async function main(): Promise<void> {

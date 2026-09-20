@@ -10,3 +10,11 @@ contracts/cache/
 contracts/broadcast/
 # forge-std 는 소스가 아니라 의존성. 받는 법은 README 참고
 contracts/lib/
+
+# Local secrets and generated deliverables
+.env.*
+!.env.example
+*.pem
+*.key
+*.tar.gz
+/artifacts/
